@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "263383517333",
+    "project_id": "bpcl-370b8",
+    "storage_bucket": "bpcl-370b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:263383517333:android:9558a35359eed26191f39c",
+        "android_client_info": {
+          "package_name": "com.pulsezest.sonipat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAykAmNTA8HMLS7X4YWlOqSXjk6GrOMXw4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

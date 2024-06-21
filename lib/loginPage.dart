@@ -22,7 +22,7 @@ class _LoginFormState extends State<LoginForm> {
               labelText: 'Email',
               hintText: 'Enter your Email',
               border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.email),
+             prefixIcon: Icon(Icons.email)
             ),
             validator: (value) {
               if (value!.isEmpty) {
