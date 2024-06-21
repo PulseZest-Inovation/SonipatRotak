@@ -9,6 +9,7 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +40,18 @@ class _LoginFormState extends State<LoginForm> {
               hintText: 'Enter your password',
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.lock),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
+              ),
             ),
-            obscureText: true,
+            obscureText: _obscureText,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'Please enter your password';

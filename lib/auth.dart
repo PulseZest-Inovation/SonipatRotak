@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sonipat_rotak_fms/loginPage.dart';
 import 'package:sonipat_rotak_fms/signUpPage.dart';
 
-
 class AuthPage extends StatefulWidget {
   @override
   _AuthPageState createState() => _AuthPageState();
@@ -44,4 +43,3 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 }
-

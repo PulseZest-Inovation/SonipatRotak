@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sonipat_rotak_fms/auth.dart';
+import 'package:sonipat_rotak_fms/form.dart';
+import 'package:sonipat_rotak_fms/loginPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home:AuthPage(),
+      home:NewForm(),
     );
   }
 }
