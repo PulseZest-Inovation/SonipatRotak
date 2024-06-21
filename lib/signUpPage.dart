@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sonipat/widgets/widgets.dart';
 
 class SignupForm extends StatefulWidget {
   @override
@@ -11,6 +14,97 @@ class _SignupFormState extends State<SignupForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  bool isSignUpPressed = false;
+
+  Future<bool> isEmailInUse(String email) async {
+    QuerySnapshot emailQuery = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+    return emailQuery.docs.isNotEmpty;
+  }
+
+  void _signup(BuildContext context) async {
+    setState(() {
+      isSignUpPressed = true;
+    });
+    final String email = _emailController.text.trim();
+    final String username = _usernameController.text.trim();
+    final String password = _passwordController.text.trim();
+    final String confirmPassword = _confirmPasswordController.text.trim();
+
+    if (email.isEmpty ||
+        username.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
+      Toast.showToast("All the fields are required!");
+    } else if (password != confirmPassword) {
+      Toast.showToast("Both the passwords do not match");
+    } else {
+      try {
+        // Validate email format
+        if (!isValidEmail(email)) {
+          Toast.showToast('Invalid email format');
+          setState(() {
+            isSignUpPressed = false;
+          });
+          return;
+        }
+
+        if (await isEmailInUse(email)) {
+          Toast.showToast('Email is already in use');
+          setState(() {
+            isSignUpPressed = false;
+          });
+          return;
+        }
+
+        // Create user with email and password
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: password);
+
+        // Access the user object from userCredential
+        User? user = userCredential.user;
+        Timestamp curr = Timestamp.now();
+
+        if (user != null) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+            'email': email,
+            'username': username,
+            'createdAt': curr,
+          });
+
+          // Account creation successful, navigate to email verification page
+          Toast.showToast('Account Creation Successful!');
+          // Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (_) => VerifyEmailPage(userId: user.uid),
+          //   ),
+          // );
+        } else {
+          Toast.showToast('Failed to create user');
+        }
+        setState(() {
+          isSignUpPressed = false;
+        });
+      } catch (e) {
+        // Handle errors
+        Toast.showToast('Something went wrong : $e!');
+        print("Error: $e");
+        setState(() {
+          isSignUpPressed = false;
+        });
+      }
+    }
+    setState(() {
+      isSignUpPressed = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,12 +182,14 @@ class _SignupFormState extends State<SignupForm> {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 // Perform signup action
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Signing up...')),
-                );
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //   SnackBar(content: Text('Signing up...')),
+                // );
+                _signup(context);
               }
             },
-            child: Text('Signup'),
+            child:
+                isSignUpPressed ? CircularProgressIndicator() : Text('Signup'),
           ),
         ],
       ),
