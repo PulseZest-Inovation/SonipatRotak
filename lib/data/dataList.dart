@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:sonipat/data/imageSlider.dart';
+import 'package:sonipat/logoutFxn.dart';
 import 'package:sonipat/widgets/widgets.dart';
 
 class DataList extends StatefulWidget {
@@ -92,7 +93,6 @@ class _DataListState extends State<DataList> {
     return ListView.separated(
         itemBuilder: (context, index) {
           List<String> imgs = [];
-          // imgs.addAll(records[index]['photos']);
           for (int i = 0; i < records[index]['photos'].length; i++) {
             imgs.add(records[index]['photos'][i]);
           }
@@ -227,7 +227,16 @@ class _DataListState extends State<DataList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('RO Data')),
+      appBar: AppBar(
+        title: Text('RO Data'),
+        actions: [
+          IconButton(
+            onPressed: () => logout(context),
+            icon: Icon(Icons.logout_rounded),
+          ),
+        ],
+        backgroundColor: Colors.red.shade100,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Navigator.push(
