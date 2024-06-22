@@ -15,6 +15,7 @@ class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool isLoginPressed = false;
+  bool _obscurePassword = true;
 
   Future _login(BuildContext cont) async {
     setState(() {
@@ -27,12 +28,7 @@ class _LoginFormState extends State<LoginForm> {
       Toast.showToast("Both the fields are required!");
     } else {
       try {
-        // userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        //   email: email,
-        //   password: password,
-        // );
         UserCredential userCredential;
-        //
         QuerySnapshot querySnapshot = await FirebaseFirestore.instance
             .collection('users')
             .where('email', isEqualTo: email)
@@ -40,8 +36,6 @@ class _LoginFormState extends State<LoginForm> {
 
         if (querySnapshot.docs.isNotEmpty) {
           DocumentSnapshot userDoc = querySnapshot.docs.first;
-          // String userEmail = userDoc['email'];
-
           userCredential =
               await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: email,
@@ -110,8 +104,17 @@ class _LoginFormState extends State<LoginForm> {
               hintText: 'Enter your password',
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.lock),
+              suffixIcon: IconButton(
+                icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              ),
             ),
-            obscureText: true,
+            obscureText: _obscurePassword, // toggle password visibility
             validator: (value) {
               if (value!.isEmpty) {
                 return 'Please enter your password';

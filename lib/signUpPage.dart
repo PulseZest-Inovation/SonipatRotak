@@ -16,6 +16,8 @@ class _SignupFormState extends State<SignupForm> {
   final _confirmPasswordController = TextEditingController();
 
   bool isSignUpPressed = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   Future<bool> isEmailInUse(String email) async {
     QuerySnapshot emailQuery = await FirebaseFirestore.instance
@@ -80,12 +82,6 @@ class _SignupFormState extends State<SignupForm> {
 
           // Account creation successful, navigate to email verification page
           Toast.showToast('Account Creation Successful!');
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (_) => VerifyEmailPage(userId: user.uid),
-          //   ),
-          // );
         } else {
           Toast.showToast('Failed to create user');
         }
@@ -151,8 +147,17 @@ class _SignupFormState extends State<SignupForm> {
               hintText: 'Enter your password',
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.lock),
+              suffixIcon: IconButton(
+                icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              ),
             ),
-            obscureText: true,
+            obscureText: _obscurePassword,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'Please enter your password';
@@ -168,8 +173,18 @@ class _SignupFormState extends State<SignupForm> {
               hintText: 'Re-enter your password',
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.lock),
+              suffixIcon: IconButton(
+                icon: Icon(_obscureConfirmPassword
+                    ? Icons.visibility_off
+                    : Icons.visibility),
+                onPressed: () {
+                  setState(() {
+                    _obscureConfirmPassword = !_obscureConfirmPassword;
+                  });
+                },
+              ),
             ),
-            obscureText: true,
+            obscureText: _obscureConfirmPassword,
             validator: (value) {
               if (value != _passwordController.text) {
                 return 'Passwords do not match';
@@ -181,10 +196,6 @@ class _SignupFormState extends State<SignupForm> {
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                // Perform signup action
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //   SnackBar(content: Text('Signing up...')),
-                // );
                 _signup(context);
               }
             },

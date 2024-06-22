@@ -5,6 +5,8 @@ import 'package:sonipat/data/imageSlider.dart';
 import 'package:sonipat/logoutFxn.dart';
 import 'package:sonipat/widgets/widgets.dart';
 
+import 'addData.dart';
+
 class DataList extends StatefulWidget {
   final String? userId;
   const DataList({Key? key, required this.userId}) : super(key: key);
@@ -47,6 +49,26 @@ class _DataListState extends State<DataList> {
             // Confirm button
             TextButton(
               onPressed: () async {
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) => Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Divider(),
+                      Text(
+                        'Deleting...',
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Please wait!',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                );
                 try {
                   // Delete the citation document from Firestore
                   DocumentReference dataRef = FirebaseFirestore.instance
@@ -62,6 +84,7 @@ class _DataListState extends State<DataList> {
                           .refFromURL(record['photos'][i])
                           .delete();
                   }
+                  Navigator.pop(context);
                   Toast.showToast('Deleted Successfully!');
 
                   // Remove the deleted citation from the records list
@@ -172,12 +195,17 @@ class _DataListState extends State<DataList> {
                         ),
                       ],
                     )
-                  : Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Text(
-                        'No images available',
-                        style: TextStyle(fontSize: 16),
-                      ),
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Text(
+                            'No images available',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ],
                     ),
             ],
           );
@@ -231,7 +259,35 @@ class _DataListState extends State<DataList> {
         title: Text('RO Data'),
         actions: [
           IconButton(
-            onPressed: () => logout(context),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Confirmation"),
+                    content: Text('Are you sure you want to logout?'),
+                    actions: [
+                      // Confirm button
+                      TextButton(
+                        onPressed: () async {
+                          logout(context);
+                          Navigator.pop(context);
+                        },
+                        child: Text("Logout",
+                            style: TextStyle(color: Colors.green)),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child:
+                            Text("Cancel", style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
             icon: Icon(Icons.logout_rounded),
           ),
         ],
@@ -239,20 +295,18 @@ class _DataListState extends State<DataList> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => AddCitationPage(
-          //       userId: widget.userId,
-          //       caseId: widget.caseId,
-          //       isCaseCitation: widget.isCaseCitation,
-          //     ),
-          //   ),
-          // ).then((value) {
-          //   if (value == true) {
-          //     updateData();
-          //   }
-          // });
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddData(
+                userId: widget.userId,
+              ),
+            ),
+          ).then((value) {
+            if (value == true) {
+              updateData();
+            }
+          });
         },
         child: Icon(Icons.add_circle_rounded, size: 30),
         // backgroundColor: Colors.teal.shade100,
