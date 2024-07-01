@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:sonipat/data/imageSlider.dart';
-import 'package:sonipat/logoutFxn.dart';
 import 'package:sonipat/widgets/widgets.dart';
-
 import 'addData.dart';
+import 'dataDetails.dart';
 
 class DataList extends StatefulWidget {
   final String? userId;
@@ -115,99 +113,27 @@ class _DataListState extends State<DataList> {
   Widget dataCard() {
     return ListView.separated(
         itemBuilder: (context, index) {
-          List<String> imgs = [];
-          for (int i = 0; i < records[index]['photos'].length; i++) {
-            imgs.add(records[index]['photos'][i]);
-          }
-          return ExpansionTile(
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () {
-                _deleteData(records[index]);
-              },
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DataDetails(data: records[index])),
+              );
+            },
+            child: ListTile(
+              trailing: IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  _deleteData(records[index]);
+                },
+              ),
+              title: Text(
+                records[index]['name'],
+                style: TextStyle(fontSize: 20),
+              ),
+              leading: Icon(Icons.data_saver_off_rounded),
             ),
-            title: Text(
-              records[index]['name'],
-              style: TextStyle(fontSize: 20),
-            ),
-            leading: Icon(Icons.line_weight_rounded),
-            children: [
-              if (records[index]['phone'] != '')
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.phone,
-                        size: 22,
-                      ),
-                      SizedBox(width: 20),
-                      Text(
-                        records[index]['phone'],
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-              SizedBox(height: 10),
-              if (records[index]['details'] != '')
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.details,
-                        size: 22,
-                      ),
-                      SizedBox(width: 20),
-                      Expanded(
-                        child: Text(
-                          records[index]['details'],
-                          softWrap: true,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              SizedBox(height: 10),
-              records[index]['photos'].isNotEmpty
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: GestureDetector(
-                            child: Text(
-                              'View Images',
-                              style:
-                                  TextStyle(color: Colors.blue, fontSize: 16),
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ImageSlider(imageUrls: imgs)),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Text(
-                            'No images available',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ],
-                    ),
-            ],
           );
         },
         separatorBuilder: (context, index) => Divider(),
@@ -255,44 +181,6 @@ class _DataListState extends State<DataList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('RO Data'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("Confirmation"),
-                    content: Text('Are you sure you want to logout?'),
-                    actions: [
-                      // Confirm button
-                      TextButton(
-                        onPressed: () async {
-                          logout(context);
-                          Navigator.pop(context);
-                        },
-                        child: Text("Logout",
-                            style: TextStyle(color: Colors.green)),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child:
-                            Text("Cancel", style: TextStyle(color: Colors.red)),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            icon: Icon(Icons.logout_rounded),
-          ),
-        ],
-        backgroundColor: Colors.red.shade100,
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(

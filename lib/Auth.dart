@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonipat/data/dataList.dart';
+import 'package:sonipat/homePage.dart';
 import 'package:sonipat/loginPage.dart';
 import 'package:sonipat/signUpPage.dart';
 
@@ -40,7 +41,7 @@ class _AuthPageState extends State<AuthPage> {
               centerTitle: true,
             ),
       body: loggedIn
-          ? DataList(userId: userId)
+          ? HomePage(userId: userId)
           : ListView(
               padding: EdgeInsets.all(16.0),
               children: <Widget>[

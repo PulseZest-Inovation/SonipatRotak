@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonipat/data/dataList.dart';
 import 'package:sonipat/widgets/widgets.dart';
 
+import 'homePage.dart';
+
 class LoginForm extends StatefulWidget {
   @override
   _LoginFormState createState() => _LoginFormState();
@@ -50,7 +52,7 @@ class _LoginFormState extends State<LoginForm> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => DataList(userId: userDoc.id)),
+                builder: (context) => HomePage(userId: userDoc.id)),
           );
           print("Login successful");
         } else {
